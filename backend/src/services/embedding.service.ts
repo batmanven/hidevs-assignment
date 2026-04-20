@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../lib/prisma'
 import Anthropic from '@anthropic-ai/sdk'
 import { config } from '../config'
 
-const prisma = new PrismaClient()
 const anthropic = new Anthropic({ apiKey: config.anthropicApiKey })
 
 export interface EmbeddingResult {
@@ -43,35 +42,60 @@ export async function storeEmbedding(
   metadata?: Record<string, any>
 ): Promise<string> {
   const embedding = await generateEmbedding(content)
+  const id = crypto.randomUUID()
+  const vectorStr = `[${embedding.join(',')}]`
 
-  const record = await prisma.embedding.create({
-    data: {
-      content,
-      metadata: metadata || {}
-    }
-  })
+  await prisma.$executeRaw`
+    INSERT INTO "Embedding" (id, content, vector, metadata, "createdAt")
+    VALUES (${id}, ${content}, ${vectorStr}::vector, ${metadata || {}}::jsonb, NOW())
+  `
 
-  return record.id
+  return id
 }
 
 export async function searchSimilarEmbeddings(
   query: string,
   limit: number = 5
 ): Promise<EmbeddingResult[]> {
-  const queryEmbedding = await generateEmbedding(query)
-  const allEmbeddings = await prisma.embedding.findMany()
+  try {
+    const queryEmbedding = await generateEmbedding(query)
+    const vectorStr = `[${queryEmbedding.join(',')}]`
 
-  const results = allEmbeddings
-    .map(embedding => ({
-      id: embedding.id,
-      content: embedding.content,
-      similarity: calculateCosineSimilarity(queryEmbedding, queryEmbedding),
-      metadata: embedding.metadata as Record<string, any>
+    // Use PGVector cosine similarity operator (<=> is cosine distance, so 1 - distance = similarity)
+    const results = await prisma.$queryRaw<any[]>`
+      SELECT 
+        id, 
+        content, 
+        metadata,
+        1 - (vector <=> ${vectorStr}::vector) as similarity
+      FROM "Embedding"
+      WHERE vector IS NOT NULL
+      ORDER BY vector <=> ${vectorStr}::vector ASC
+      LIMIT ${limit}
+    `
+
+    return results.map(r => ({
+      id: r.id,
+      content: r.content,
+      similarity: Number(r.similarity),
+      metadata: r.metadata as Record<string, any>
     }))
-    .sort((a, b) => b.similarity - a.similarity)
-    .slice(0, limit)
-
-  return results
+  } catch (error) {
+    console.error('Vector search failed, falling back to basic search:', error)
+    // Fallback to basic keyword search if PGVector is not available/setup
+    const matches = await prisma.embedding.findMany({
+      where: {
+        content: { contains: query, mode: 'insensitive' }
+      },
+      take: limit
+    })
+    return matches.map(m => ({
+      id: m.id,
+      content: m.content,
+      similarity: 0.5,
+      metadata: m.metadata as Record<string, any>
+    }))
+  }
 }
 
 export function calculateCosineSimilarity(vecA: number[], vecB: number[]): number {

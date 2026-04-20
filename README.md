@@ -1,236 +1,85 @@
-# RealityForge
+# RealityForge 
 
-A production-ready multi-agent, RAG-powered simulation engine that stress-tests startup ideas before you build them.
+A production-ready **Multi-Agent Simulation Engine** powered by RAG (Retrieval-Augmented Generation) that stress-tests startup ideas against realistic market constraints before a single line of product code is written.
 
-## Overview
+---
 
-RealityForge takes rough ideas and turns them into fully simulated realities with AI agents (customers, competitors, investors, operations), running simulations to provide real outcomes, failures, and decisions.
+## ⚡ "Peak" Engineering Upgrades
+This project has been architected to "Peak" technical standards, going beyond a standard MVP:
 
-## Tech Stack
+- **Collaborative Multi-Agent Loop**: Agents don't just talk in order; they now explicitly reference, debate, and refine each other's points across 4 separate simulation phases (Launch, Adoption, Competition, Scaling).
+- **Professional-Grade RAG (PGVector)**: Migrated from inefficient in-memory search to **PostgreSQL vector similarity search** (`vector <=> query`) for enterprise-scale semantic retrieval.
+- **Intelligence Evidence UI**: A dedicated "RAG Evidence" sidebar in the dashboard that shows the exact market data points retrieved to support every agent response, providing transparency and trust.
+- **Premium Aesthetics**: Fully responsive Glassmorphism UI built with **Tailwind CSS v4** and **Framer Motion** for a state-of-the-art user experience.
+- **Production-Ready Infra**: Complete CI/CD via GitHub Actions, Docker containerization, Swagger/OpenAPI documentation, and real-time monitoring metrics.
+
+---
+
+## 🛠️ Tech Stack
 
 ### Frontend
-- React 18 + TypeScript
-- Vite
-- TailwindCSS v4
-- Socket.io-client
-- Recharts
-- React Router
+- **Framework**: React 19 + TypeScript (Vite)
+- **Styling**: TailwindCSS v4 + Glassmorphism Design System
+- **Animations**: Framer Motion
+- **State Management**: Zustand
+- **Real-time**: Socket.io-client
 
 ### Backend
-- Node.js 20 + Express
-- TypeScript
-- Socket.io
-- Claude API (Anthropic)
-- LangChain for agent orchestration
-- Prisma ORM
-- PostgreSQL 16
+- **Runtime**: Node.js 20 + Express
+- **AI Orchestration**: LangChain + Anthropic Claude 3.5 Sonnet
+- **Database/ORM**: PostgreSQL 16 (with PGVector) + Prisma 7
+- **Documentation**: Swagger UI / OpenAPI 3.0
+- **Security**: JWT (HS256) + Helmet + Rate Limiting
 
-### Infrastructure
-- Docker & Docker Compose
-- GitHub Actions (CI/CD)
-- Railway (deployment target)
+---
 
-## Features
+## 🏗️ Architecture: The Neural Agentic Loop
 
-### Core Features
-- **Multi-Agent Simulation**: 4 AI agents (customer, competitor, investor, operations) with unique personas using LangChain
-- **RAG-Powered Context**: Knowledge base with vector embeddings for semantic search
-- **Real-Time Streaming**: WebSocket-based live simulation updates
-- **Comprehensive Results**: Success probability, risk assessment, failure scenarios, timeline projection
-- **JWT Authentication**: Secure user authentication and authorization
-- **Rate Limiting**: API protection against abuse
-- **Input Validation**: Comprehensive request validation and sanitization
-- **Monitoring**: Winston logging and performance metrics
-- **API Documentation**: Swagger/OpenAPI documentation at `/api-docs`
+RealityForge uses a modular architecture designed for high-fidelity simulations:
 
-### Advanced Features
-- **Vector Embeddings**: Cosine similarity search using pgvector
-- **Multi-Turn Conversations**: Agent dialogue history management
-- **Streaming AI Responses**: Real-time text generation
-- **Error Handling**: Comprehensive error middleware with custom error classes
-- **Unit Testing**: Jest test suite for critical functions
+1. **Semantic Knowledge Layer**: Uses Anthropic's reasoning capabilities to ingest unstructured market data and store it in a vector database for context-aware retrieval.
+2. **Context-Augmented Retrieval**: When a user inputs an idea, the system retrieves the top-K relevant market facts using Cosine Similarity via `pgvector`.
+3. **Multi-Persona Simulation**: 4 distinct agents (Customer, Competitor, Investor, Operations) are spawned. They use a **Collaborative Loop** where each agent's "thinking" is influenced by both the RAG context and the previous agents' rebuttals.
+4. **Synthesis Engine**: A final synthesis step aggregates the transcript into organized SWOT analysis, risk assessments, and a 12-month projected timeline.
 
-## Quick Start
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 20+
 - Docker & Docker Compose
-- Anthropic API Key
-- PostgreSQL 16
+- Anthropic API Key (Claude 3.5 Sonnet)
 
 ### Installation
 
-1. Clone the repository
+1. **Clone & Install**
 ```bash
 git clone <repository-url>
-cd hidev
+cd realityforge
+cd backend && npm install
+cd ../frontend && npm install
 ```
 
-2. Install dependencies
-```bash
-cd backend
-npm install
-cd ../frontend
-npm install
-```
-
-3. Set up environment variables
-```bash
-cp backend/.env.example backend/.env
-```
-
-Edit `backend/.env`:
+2. **Environment Configuration**
+Create `backend/.env`:
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/realityforge
-ANTHROPIC_API_KEY=your_api_key_here
-PORT=3001
-NODE_ENV=development
-CORS_ORIGIN=http://localhost:5174
-JWT_SECRET=your_jwt_secret_here
-JWT_EXPIRES_IN=7d
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/realityforge
+ANTHROPIC_API_KEY=your_claude_key
+JWT_SECRET=peak_secret_key
+CORS_ORIGIN=http://localhost:5173
 ```
 
-4. Set up database
+3. **Database Setup (Vector Support)**
 ```bash
+# Ensure Docker is running for pgvector support
+docker-compose up -d postgres
 cd backend
 npx prisma generate
 npx prisma migrate dev
 ```
 
-5. Start development servers
+4. **Launch Dev Environment**
 ```bash
 # Backend
-cd backend
-npm run dev
-
-# Frontend (new terminal)
-cd frontend
-npm run dev
-```
-
-### Docker Deployment
-
-```bash
-docker-compose up -d
-```
-
-Access the application at:
-- Frontend: http://localhost
-- Backend API: http://localhost:3001
-- API Documentation: http://localhost:3001/api-docs
-- Health Check: http://localhost:3001/health
-- Metrics: http://localhost:3001/metrics
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user and get JWT token
-
-### Ideas
-- `POST /api/ideas` - Create a new idea (requires authentication)
-- `GET /api/ideas/:id` - Get idea details (requires authentication)
-
-### Simulations
-- `POST /api/simulations/:id/start` - Start a simulation (requires authentication)
-- `GET /api/simulations/:id/results` - Get simulation results (requires authentication)
-- `GET /api/simulations/:id/status` - Get simulation status (requires authentication)
-
-### System
-- `GET /health` - Health check endpoint
-- `GET /metrics` - Performance metrics
-- `GET /api-docs` - Swagger API documentation
-
-## WebSocket Events
-
-### Client → Server
-- `join_simulation` - Join a simulation room
-- `leave_simulation` - Leave a simulation room
-
-### Server → Client
-- `simulation_started` - Simulation has started
-- `agent_chunk` - Streaming text chunk from agent
-- `agent_action` - Agent performed an action
-- `simulation_progress` - Simulation progress update
-- `simulation_completed` - Simulation completed with results
-- `simulation_failed` - Simulation failed with error
-
-## Project Structure
-
-```
-realityforge/
-├── backend/
-│   ├── src/
-│   │   ├── services/     # Claude, RAG, Agent, Simulation, Embedding, Conversation, Stream services
-│   │   ├── controllers/  # Auth controller
-│   │   ├── routes/       # API routes (auth, idea, simulation)
-│   │   ├── middleware/   # Auth, error, monitoring, rate limiting, validation
-│   │   ├── config/       # Configuration and Swagger
-│   │   ├── utils/        # Logger utility
-│   │   └── index.ts      # Server entry point
-│   ├── prisma/           # Database schema and migrations
-│   ├── __tests__/        # Unit tests
-│   └── Dockerfile
-├── frontend/
-│   ├── src/
-│   │   ├── pages/        # React pages (Login, IdeaInput, SimulationDashboard, ResultsPanel)
-│   │   ├── components/   # Reusable components (LoadingSpinner, AnimatedCard, ProgressBar)
-│   │   └── main.tsx
-│   └── Dockerfile
-├── docker-compose.yml
-└── .github/workflows/    # CI/CD pipelines
-```
-
-## How It Works
-
-1. **User Authentication**: Users register/login with JWT tokens
-2. **Idea Input**: User enters a startup idea
-3. **Context Retrieval**: RAG system retrieves relevant market insights using vector embeddings
-4. **Agent Spawning**: 4 AI agents are created with unique personas using LangChain
-5. **Simulation**: Agents interact across multiple phases (launch, adoption, competition, scaling)
-6. **Streaming**: Real-time updates via WebSocket
-7. **Results Generation**: Claude AI analyzes interactions and generates comprehensive results
-8. **Visualization**: Results displayed with charts, timelines, and actionable insights
-
-## Testing
-
-```bash
-cd backend
-npm test              # Run tests
-npm run test:coverage  # Run tests with coverage
-```
-
-## Development
-
-### Backend
-```bash
-cd backend
-npm run dev          # Start development server
-npm run build        # Build for production
-npm start            # Start production server
-npx prisma studio    # Open Prisma Studio
-```
-
-### Frontend
-```bash
-cd frontend
-npm run dev          # Start development server
-npm run build        # Build for production
-```
-
-## Environment Variables
-
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| DATABASE_URL | PostgreSQL connection string | Yes | - |
-| ANTHROPIC_API_KEY | Anthropic Claude API key | Yes | - |
-| PORT | Backend port | No | 3001 |
-| NODE_ENV | Environment | No | development |
-| CORS_ORIGIN | CORS origin | No | * |
-| JWT_SECRET | JWT signing secret | Yes | - |
-| JWT_EXPIRES_IN | JWT expiration | No | 7d |
-| LOG_LEVEL | Logging level | No | info |
-
-## License
-
 MIT

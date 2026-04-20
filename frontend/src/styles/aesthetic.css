@@ -1,0 +1,52 @@
+@layer base {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --mesh-gradient: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                     radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                     radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+  }
+}
+
+.glass-morphism {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.mesh-background {
+  background-color: hsla(253,16%,7%,1);
+  background-image: var(--mesh-gradient);
+}
+
+.agent-gradient-blue {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+.agent-gradient-red {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+}
+
+.agent-gradient-green {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+}
+
+.agent-gradient-stone {
+  background: linear-gradient(135deg, #a8a29e 0%, #78716c 100%);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.premium-shadow {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}

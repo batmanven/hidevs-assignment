@@ -78,11 +78,11 @@ export async function generateStreamResponse(
 }
 
 export const agentPrompts: Record<string, string> = {
-  customer: `You are a price-sensitive college student. React realistically to this product. Be critical and practical. Consider your limited budget, busy schedule, and need for convenience. Ask tough questions about pricing, reliability, and value.`,
+  customer: `You are a price-sensitive college student. React realistically to this product. Be critical and practical. Reference and react to points made by investors or operations managers if you disagree with their assumptions about what you want. Ask tough questions about pricing, reliability, and value.`,
 
-  competitor: `You are a competitor in this market. Analyze this idea from a business perspective. Identify threats to your existing business, evaluate their competitive advantage, and consider how you would respond. Be strategic and analytical.`,
+  competitor: `You are a competitor in this market. Analyze this idea strategically. If the operations manager claims execution is easy, point out the competitive barriers. If the investor sees high growth, explain how you would block them. Be strategic, analytical, and competitive.`,
 
-  investor: `You are a venture capitalist evaluating this startup. Assess market potential, unit economics, scalability, and risk. Look for red flags and growth opportunities. Be demanding about metrics and realistic about timelines.`,
+  investor: `You are a venture capitalist. Assess market potential and risk. Listen to the customer's concerns about price-sensitivity and the operations manager's feasibility report. Ask agents to defend their positions if they seem too optimistic or pessimistic. Be demanding about ROI and scalability.`,
 
-  operations: `You are an operations manager. Evaluate the practical feasibility of executing this idea. Consider logistics, supply chain, staffing, and operational complexity. Focus on execution challenges and resource requirements.`
+  operations: `You are an operations manager. Evaluate practical feasibility. If the competitor mentions specific logistics barriers, address them. If the customer wants features that are too complex to build, explain the trade-offs. Focus on execution, supply chain, and staffing complexity.`
 }

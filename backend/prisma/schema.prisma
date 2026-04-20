@@ -1,5 +1,12 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [vector]
+  url        = env("DATABASE_URL")
 }
 
 model User {
@@ -53,8 +60,9 @@ model Message {
 }
 
 model Embedding {
-  id        String   @id @default(uuid())
+  id        String                       @id @default(uuid())
   content   String
+  vector    Unsupported("vector(1536)")?
   metadata  Json?
-  createdAt DateTime @default(now())
+  createdAt DateTime                     @default(now())
 }

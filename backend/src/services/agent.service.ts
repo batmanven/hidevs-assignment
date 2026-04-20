@@ -1,8 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../lib/prisma'
 import { generateResponse, ClaudeMessage, agentPrompts } from './claude.service'
 import { getContextForIdea } from './rag.service'
-
-const prisma = new PrismaClient()
 
 export interface AgentConfig {
   role: 'customer' | 'competitor' | 'investor' | 'operations'

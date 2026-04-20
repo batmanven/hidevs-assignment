@@ -10,6 +10,25 @@ export function setSocketIO(socketIO: any) {
 
 const router = Router()
 
+/**
+ * @openapi
+ * /api/simulations/{id}/start:
+ *   post:
+ *     tags:
+ *       - Simulations
+ *     summary: Start a new AI agent simulation
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Simulation started
+ *       500:
+ *         description: Server error
+ */
 router.post('/:id/start', async (req, res) => {
   try {
     const { id } = req.params
@@ -35,6 +54,29 @@ router.post('/:id/start', async (req, res) => {
   }
 })
 
+/**
+ * @openapi
+ * /api/simulations/{id}/results:
+ *   get:
+ *     tags:
+ *       - Simulations
+ *     summary: Get final simulation results
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Simulation results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Simulation'
+ *       404:
+ *         description: Results not found
+ */
 router.get('/:id/results', async (req, res) => {
   try {
     const { id } = req.params
@@ -51,6 +93,23 @@ router.get('/:id/results', async (req, res) => {
   }
 })
 
+/**
+ * @openapi
+ * /api/simulations/{id}/status:
+ *   get:
+ *     tags:
+ *       - Simulations
+ *     summary: Get current simulation status
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Simulation status
+ */
 router.get('/:id/status', async (req, res) => {
   try {
     const { id } = req.params

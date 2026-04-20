@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../lib/prisma'
 import { createAgent, generateAgentResponse, defaultAgents, AgentConfig } from './agent.service'
 import { generateResponse, ClaudeMessage } from './claude.service'
-
-const prisma = new PrismaClient()
+import { getContextForIdea } from './rag.service'
 
 export interface SimulationConfig {
   idea: string
@@ -69,34 +68,53 @@ export async function startSimulation(
   })
 
   const conversationHistory: ClaudeMessage[] = []
-  const phases = ['launch', 'adoption', 'competition', 'scaling']
+  const phases = [
+    { name: 'Launch & MVP', focus: 'Initial market entry and core value proposition' },
+    { name: 'Customer Adoption', focus: 'User growth, retention, and market feedback' },
+    { name: 'Competitive Response', focus: 'Reaction from incumbents and defensive strategies' },
+    { name: 'Scale & Profitability', focus: 'Operational scaling, unit economics, and long-term viability' }
+  ]
 
   for (const phase of phases) {
+    onProgress({
+      type: 'phase_started',
+      phase: phase.name,
+      focus: phase.focus
+    })
+
     for (const agentId of agentIds) {
+      const agent = await prisma.agent.findUnique({ where: { id: agentId } })
+      
+      const phaseContext = `Phase: ${phase.name}. Focus: ${phase.focus}. 
+      As ${agent?.role}, analyze how this idea survives and thrives during this stage. 
+      Specifically address any concerns or points raised by other agents in the history above.`
+
+      const ragContext = await getContextForIdea(simulation.idea.description)
+
       const response = await generateAgentResponse(
         agentId,
         simulation.idea.description,
         conversationHistory,
-        `Current Phase: ${phase}`
+        phaseContext
       )
 
-      const agent = await prisma.agent.findUnique({ where: { id: agentId } })
-      
       onProgress({
         type: 'agent_action',
-        id: Date.now().toString(),
+        id: Math.random().toString(36).substr(2, 9),
         agentId,
         role: agent?.role,
         content: response,
-        timestamp: new Date()
+        timestamp: new Date(),
+        evidence: ragContext // Pass the RAG evidence to the UI
       })
 
       conversationHistory.push({
-        role: agent?.role as 'user' | 'assistant' || 'assistant',
-        content: response
+        role: 'assistant',
+        content: `[${agent?.role?.toUpperCase()}]: ${response}`
       })
 
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Add a small delay for "thinking" effect in UI
+      await new Promise(resolve => setTimeout(resolve, 800))
     }
   }
 
@@ -133,6 +151,8 @@ async function generateResults(
 Respond in JSON format with this structure:
 {
   "successProbability": number,
+  "marketSentiment": number, 
+  "criticalFriction": string,
   "risks": [{"category": string, "description": string, "severity": "high|medium|low"}],
   "failureScenarios": [{"scenario": string, "probability": number}],
   "suggestions": [string],

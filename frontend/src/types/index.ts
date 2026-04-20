@@ -16,6 +16,7 @@ export interface AgentMessage {
   role?: string
   content: string
   timestamp: Date | string
+  evidence?: string
 }
 
 export interface Risk {
@@ -37,6 +38,8 @@ export interface TimelinePhase {
 
 export interface SimulationResults {
   successProbability: number
+  marketSentiment: number
+  criticalFriction: string
   risks: Risk[]
   failureScenarios: FailureScenario[]
   suggestions: string[]
