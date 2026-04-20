@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  ideas     Idea[]
+}
+
+model Idea {
+  id             String       @id @default(uuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id])
+  description    String
+  structuredData Json?
+  simulations    Simulation[]
+  createdAt      DateTime     @default(now())
+}
+
+model Simulation {
+  id          String   @id @default(uuid())
+  ideaId      String
+  idea        Idea     @relation(fields: [ideaId], references: [id])
+  status      String
+  results     Json?
+  agents      Agent[]
+  messages    Message[]
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+}
+
+model Agent {
+  id           String       @id @default(uuid())
+  simulationId String
+  simulation   Simulation   @relation(fields: [simulationId], references: [id])
+  role         String
+  persona      String
+  memory       Json?
+  messages     Message[]
+}
+
+model Message {
+  id           String      @id @default(uuid())
+  simulationId String
+  simulation   Simulation  @relation(fields: [simulationId], references: [id])
+  agentId      String?
+  agent        Agent?      @relation(fields: [agentId], references: [id])
+  content      String
+  timestamp    DateTime    @default(now())
+}
+
+model Embedding {
+  id        String   @id @default(uuid())
+  content   String
+  metadata  Json?
+  createdAt DateTime @default(now())
+}
