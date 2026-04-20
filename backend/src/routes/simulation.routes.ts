@@ -17,11 +17,11 @@ router.post('/:id/start', async (req, res) => {
     startSimulation(id, (action) => {
       if (io) {
         io.to(id).emit('agent_action', action)
-        
+
         if (action.type === 'simulation_started') {
           io.to(id).emit('simulation_started', action)
         }
-        
+
         if (action.type === 'simulation_completed') {
           io.to(id).emit('simulation_completed', action)
         }
