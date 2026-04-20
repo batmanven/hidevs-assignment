@@ -1,4 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
+
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Users, Activity, Clock, CheckCircle, Layers, Shield, ChevronRight, Info } from 'lucide-react'
@@ -28,12 +30,12 @@ export default function SimulationDashboard() {
     }
   }, [reset])
 
-  // Automatically select the latest message to show evidence
+  
   useEffect(() => {
     if (messages.length > 0) {
       setSelectedMessageId(messages[messages.length - 1].id)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, [messages.length])
 
   const getRoleColor = (role: string) => {

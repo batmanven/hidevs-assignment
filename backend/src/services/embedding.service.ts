@@ -61,7 +61,7 @@ export async function searchSimilarEmbeddings(
     const queryEmbedding = await generateEmbedding(query)
     const vectorStr = `[${queryEmbedding.join(',')}]`
 
-    // Use PGVector cosine similarity operator (<=> is cosine distance, so 1 - distance = similarity)
+    
     const results = await prisma.$queryRaw<any[]>`
       SELECT 
         id, 
@@ -82,7 +82,7 @@ export async function searchSimilarEmbeddings(
     }))
   } catch (error) {
     console.error('Vector search failed, falling back to basic search:', error)
-    // Fallback to basic keyword search if PGVector is not available/setup
+    
     const matches = await prisma.embedding.findMany({
       where: {
         content: { contains: query, mode: 'insensitive' }

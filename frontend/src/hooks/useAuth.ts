@@ -20,7 +20,7 @@ export function useAuth() {
       await login(email, password)
       navigate('/')
     } catch {
-      // Error is handled in store
+      
     }
   }, [login, navigate])
 
@@ -29,7 +29,7 @@ export function useAuth() {
       await register(email, password)
       navigate('/')
     } catch {
-      // Error is handled in store
+      
     }
   }, [register, navigate])
 

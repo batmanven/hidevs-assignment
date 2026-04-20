@@ -46,32 +46,12 @@ app.use('/api/auth', rateLimit(10, 60000), authRoutes)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-/**
- * @openapi
- * /health:
- *   get:
- *     tags:
- *       - Health
- *     summary: Check API health status
- *     responses:
- *       200:
- *         description: API is healthy
- */
+
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date() })
 })
 
-/**
- * @openapi
- * /metrics:
- *   get:
- *     tags:
- *       - Health
- *     summary: Get system metrics
- *     responses:
- *       200:
- *         description: System metrics
- */
+
 app.get('/metrics', (req, res) => {
   res.json(getMetrics())
 })

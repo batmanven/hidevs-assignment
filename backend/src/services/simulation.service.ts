@@ -105,7 +105,7 @@ export async function startSimulation(
         role: agent?.role,
         content: response,
         timestamp: new Date(),
-        evidence: ragContext // Pass the RAG evidence to the UI
+        evidence: ragContext 
       })
 
       conversationHistory.push({
@@ -113,7 +113,7 @@ export async function startSimulation(
         content: `[${agent?.role?.toUpperCase()}]: ${response}`
       })
 
-      // Add a small delay for "thinking" effect in UI
+      
       await new Promise(resolve => setTimeout(resolve, 800))
     }
   }
