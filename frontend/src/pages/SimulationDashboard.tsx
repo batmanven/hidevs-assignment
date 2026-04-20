@@ -30,12 +30,10 @@ export default function SimulationDashboard() {
     }
   }, [reset])
 
-  
   useEffect(() => {
     if (messages.length > 0) {
       setSelectedMessageId(messages[messages.length - 1].id)
     }
-  
   }, [messages.length])
 
   const getRoleColor = (role: string) => {
