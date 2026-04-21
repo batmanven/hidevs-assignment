@@ -64,7 +64,7 @@ export default function NeuralLoadingModal({ isOpen, onComplete }: NeuralLoading
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] flex items-center justify-center bg-pure-black/95 backdrop-blur-xl p-6"
+        className="fixed inset-0 z-100 flex items-center justify-center bg-pure-black/95 backdrop-blur-xl p-6"
       >
         <div className="max-w-xl w-full">
           {/* Pulsing Neural Core */}

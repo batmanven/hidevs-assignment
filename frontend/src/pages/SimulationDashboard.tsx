@@ -137,8 +137,8 @@ export default function SimulationDashboard() {
                               : 'bg-transparent border-white/5 hover:border-white/20'
                             }`}
                         >
-                          <div className={`w-12 h-12 rounded flex items-center justify-center shrink-0 font-mono text-sm font-bold ${getRoleColor(msg.role)}`}>
-                            {msg.role[0]?.toUpperCase() || 'P'}
+                          <div className={`w-12 h-12 rounded flex items-center justify-center shrink-0 font-mono text-sm font-bold ${getRoleColor(msg.role || 'unknown')}`}>
+                            {msg.role ? msg.role[0].toUpperCase() : 'P'}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-3">
@@ -154,7 +154,7 @@ export default function SimulationDashboard() {
                                 <div className="w-2 h-2 bg-cyan rounded-full shadow-[0_0_8px_#00ffff]" />
                               )}
                             </div>
-                            <p className="font-mono text-[13px] text-white/80 leading-relaxed tracking-tight whitespace-pre-wrap break-words">
+                            <p className="font-mono text-[13px] text-white/80 leading-relaxed tracking-tight whitespace-pre-wrap wrap-break-word">
                               {msg.content}
                             </p>
                           </div>
@@ -175,8 +175,8 @@ export default function SimulationDashboard() {
               <div className="space-y-6">
                 {agents.map((agent) => (
                   <div key={agent.id} className="flex items-start gap-4">
-                    <div className={`w-6 h-6 rounded flex items-center justify-center shrink-0 text-[10px] font-bold ${getRoleColor(agent.role)}`}>
-                      {agent.role[0]?.toUpperCase()}
+                    <div className={`w-6 h-6 rounded flex items-center justify-center shrink-0 text-[10px] font-bold ${getRoleColor(agent.role || 'unknown')}`}>
+                      {agent.role ? agent.role[0].toUpperCase() : 'A'}
                     </div>
                     <div className="flex-1 min-w-0">
                       <span className="text-xs font-bold text-white uppercase tracking-widest block mb-1">{agent.role}</span>
