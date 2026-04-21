@@ -79,11 +79,16 @@ io.on('connection', (socket) => {
 
 export { io }
 
+import { initCronJobs } from './services/cron.service'
+
 async function startServer(retries = 5) {
   for (let i = 0; i < retries; i++) {
     try {
       await initializeKnowledgeBase()
       console.log('Knowledge base initialized')
+
+      // Initialize Cron Ecosystem
+      initCronJobs()
 
       httpServer.listen(config.port, () => {
         console.log(`Server running on port ${config.port}`)
