@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
+    "build": "tsc && prisma migrate deploy",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate-dev": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "test": "jest",
     "test:coverage": "jest --coverage"
