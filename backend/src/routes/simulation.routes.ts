@@ -17,14 +17,16 @@ router.post('/:id/start', async (req, res) => {
 
     startSimulation(id, (action) => {
       if (io) {
-        io.to(id).emit('agent_action', action)
-
-        if (action.type === 'simulation_started') {
+        // Correctly route events based on their type
+        if (action.type === 'agent_action') {
+          io.to(id).emit('agent_action', action)
+        } else if (action.type === 'simulation_started') {
           io.to(id).emit('simulation_started', action)
-        }
-
-        if (action.type === 'simulation_completed') {
+        } else if (action.type === 'simulation_completed') {
           io.to(id).emit('simulation_completed', action)
+        } else if (action.type === 'phase_started') {
+          // You could add a phase_started emission here if needed
+          io.to(id).emit('phase_started', action)
         }
       }
     })

@@ -27,6 +27,7 @@ interface SimulationState {
   setStatus: (status: SimulationStatus) => void
   setProgress: (progress: number) => void
   reset: () => void
+  startSimulation: (id: string) => Promise<void>
   fetchResults: (id: string) => Promise<void>
 }
 
@@ -99,6 +100,17 @@ export const useSimulationStore = create<SimulationState>((set) => ({
       progress: 0,
       error: null
     })
+  },
+
+  startSimulation: async (id: string) => {
+    try {
+      await api.simulations.start(id)
+    } catch (err) {
+      set({
+        error: err instanceof Error ? err.message : 'Failed to start simulation',
+        status: 'failed'
+      })
+    }
   },
 
   fetchResults: async (id: string) => {

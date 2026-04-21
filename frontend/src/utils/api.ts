@@ -74,6 +74,14 @@ export const api = {
         headers: getAuthHeaders()
       })
       return handleResponse<Simulation[]>(response)
+    },
+
+    start: async (id: string): Promise<{ status: string }> => {
+      const response = await fetch(`${API_BASE_URL}/simulations/${id}/start`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      })
+      return handleResponse<{ status: string }>(response)
     }
   },
 

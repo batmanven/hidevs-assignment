@@ -49,11 +49,15 @@ export function useSocket(simulationId: string | undefined) {
     socket.on('agent_action', handleAgentAction)
     socket.on('simulation_completed', handleSimulationCompleted)
     socket.on('simulation_failed', handleSimulationFailed)
+    socket.on('phase_started', () => {
+      setStatus('running')
+    })
 
     return () => {
       socket.disconnect()
       setSocket(null)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     simulationId,
     handleSimulationStarted,

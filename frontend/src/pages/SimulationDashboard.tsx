@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Users, Activity, Clock, CheckCircle, Layers, Shield, ChevronRight, Info } from 'lucide-react'
+import { Users, Activity, Clock, CheckCircle, Layers, Shield, Info } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useSimulationStore } from '../stores'
 import { useSocket } from '../hooks'
@@ -12,10 +12,16 @@ import '../styles/aesthetic.css'
 export default function SimulationDashboard() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { messages, agents, status, progress, reset } = useSimulationStore()
+  const { messages, agents, status, progress, reset, startSimulation } = useSimulationStore()
   const [selectedMessageId, setSelectedMessageId] = useState<string | null>(null)
 
   useSocket(id)
+
+  useEffect(() => {
+    if (id && messages.length === 0 && status !== 'completed') {
+      startSimulation(id)
+    }
+  }, [id, startSimulation, messages.length, status])
 
   useEffect(() => {
     if (status === 'completed') {
@@ -37,46 +43,51 @@ export default function SimulationDashboard() {
   }, [messages.length])
 
   const getRoleColor = (role: string) => {
+    const defaultStyles = "border border-mist-10 shadow-sm"
     const colors: Record<string, string> = {
-      customer: 'agent-gradient-blue text-white',
-      competitor: 'agent-gradient-red text-white',
-      investor: 'agent-gradient-green text-white',
-      operations: 'agent-gradient-stone text-white'
+      customer: `bg-[#0007cd]/20 border-cobalt/30 text-cyan`,
+      competitor: `bg-red-500/20 border-red-500/30 text-red-400`,
+      investor: `bg-green-500/20 border-green-500/30 text-green-400`,
+      operations: `bg-stone-500/20 border-stone-500/30 text-stone-400`
     }
-    return colors[role] || 'bg-stone-900 text-white'
+    return `${colors[role] || 'bg-white/5 text-white'} ${defaultStyles}`
   }
 
   const selectedMessage = messages.find(m => m.id === selectedMessageId)
 
   return (
-    <div className="min-h-screen mesh-background text-stone-100 selection:bg-stone-500/30">
-      <header className="border-b border-white/10 glass-morphism sticky top-0 z-50">
+    <div className="min-h-screen bg-void-black text-white selection:bg-cyan/30 font-sans overflow-x-hidden relative">
+      {/* Bioluminescent Glows */}
+      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] glow-blue pointer-events-none opacity-50" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] glow-cyan pointer-events-none opacity-30" />
+
+      <header className="border-b border-white/5 bg-void-black/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center gap-3"
+            className="flex items-center gap-4"
           >
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-white/5">
-              <Layers className="w-6 h-6 text-stone-900" />
+            <div className="w-10 h-10 bg-white rounded flex items-center justify-center brutalist-shadow">
+              <Layers className="w-6 h-6 text-black" />
             </div>
             <div>
-              <span className="text-xl font-bold tracking-tight text-white block">hidev simulation</span>
-              <span className="text-xs text-stone-400 font-medium">Session ID: {id?.slice(0, 8)}...</span>
+              <span className="text-xl font-bold tracking-tight text-white block tight-heading uppercase">RealityForge</span>
+              <span className="text-[10px] font-mono text-muted-smoke tracking-wider uppercase">Neural Link Established: {id?.slice(0, 8)}</span>
             </div>
           </motion.div>
 
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col items-end gap-1">
+          <div className="flex items-center gap-8">
+            <div className="flex flex-col items-end gap-2">
               <div className="flex items-center gap-2">
-                <Activity className="w-4 h-4 text-green-400 animate-pulse" />
-                <span className="text-sm font-semibold capitalize text-white">{status}</span>
+                <Activity className="w-3.5 h-3.5 text-cyan animate-pulse" />
+                <span className="text-[11px] font-mono font-medium uppercase tracking-widest text-cyan/80">{status}</span>
               </div>
-              <div className="w-48 bg-white/10 rounded-full h-1.5 overflow-hidden">
+              <div className="w-48 bg-white/5 rounded-full h-1 overflow-hidden border border-white/5">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
-                  className="bg-white h-full shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                  className="bg-cyan h-full shadow-[0_0_8px_rgba(0,255,255,0.6)]"
                 />
               </div>
             </div>
@@ -84,89 +95,92 @@ export default function SimulationDashboard() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-12 gap-6">
-          <div className="col-span-8 space-y-6">
-            <section className="glass-morphism rounded-3xl overflow-hidden premium-shadow">
-              <div className="px-8 py-6 border-b border-white/10 flex items-center justify-between bg-white/2">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white/5 rounded-lg">
-                    <Users className="w-5 h-5 text-stone-300" />
+      <main className="max-w-7xl mx-auto px-6 py-12 relative z-10">
+        <div className="grid grid-cols-12 gap-8">
+          <div className="col-span-8 space-y-8">
+            <section className="bg-pure-black border border-white/10 rounded-lg overflow-hidden brutalist-shadow">
+              <div className="px-8 py-5 border-b border-white/5 flex items-center justify-between bg-white/2">
+                <div className="flex items-center gap-3 text-white">
+                  <div className="p-2 bg-white/5 rounded">
+                    <Users className="w-4 h-4" />
                   </div>
-                  <h2 className="text-lg font-bold text-white">Live Intelligence Feed</h2>
+                  <h2 className="text-sm font-bold uppercase tracking-[0.2em] tight-heading">Live Intelligence Feed</h2>
                 </div>
-                <div className="text-xs text-stone-400 font-medium uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/5">
-                  Real-time
+                <div className="text-[10px] font-mono text-cyan uppercase tracking-[0.3em] bg-cyan/10 px-3 py-1 rounded border border-cyan/20">
+                  Secure Stream
                 </div>
               </div>
 
-              <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto scrollbar-hide">
+              <div className="p-8 space-y-6 max-h-[72vh] overflow-y-auto scrollbar-thin">
                 <AnimatePresence mode="popLayout">
                   {messages.length === 0 ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="flex flex-col items-center justify-center py-20 text-stone-400 gap-4"
+                      className="flex flex-col items-center justify-center py-24 text-muted-smoke gap-6"
                     >
-                      <div className="w-12 h-12 border-2 border-stone-700 border-t-white rounded-full animate-spin" />
-                      <p className="font-medium animate-pulse">Initializing Neural Agents...</p>
+                      <div className="w-8 h-8 border border-white/10 border-t-cyan rounded-full animate-spin" />
+                      <p className="font-mono text-xs uppercase tracking-[0.2em] animate-pulse">Initializing simulation matrix...</p>
                     </motion.div>
                   ) : (
-                    messages.map((msg) => (
-                      <motion.div
-                        layout
-                        initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ type: 'spring', damping: 20, stiffness: 100 }}
-                        key={msg.id}
-                        onClick={() => setSelectedMessageId(msg.id)}
-                        className={`flex gap-5 p-6 rounded-2xl border transition-all cursor-pointer group ${selectedMessageId === msg.id
-                            ? 'bg-white/10 border-white/20 shadow-xl'
-                            : 'bg-white/3 border-white/5 hover:bg-white/5'
-                          }`}
-                      >
-                        <div className={`w-14 h-14 rounded-2xl ${getRoleColor(msg.role || 'unknown')} flex items-center justify-center shrink-0 font-bold text-xl shadow-lg group-hover:scale-105 transition-transform`}>
-                          {msg.role?.[0]?.toUpperCase() || '?'}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-3">
-                              <span className="font-bold text-white text-lg capitalize">{msg.role} Agent</span>
-                              <div className="h-1 w-1 bg-stone-500 rounded-full" />
-                              <span className="text-stone-400 text-xs font-medium flex items-center gap-1.5 uppercase tracking-tighter">
-                                <Clock className="w-3.5 h-3.5" />
-                                {new Date(msg.timestamp).toLocaleTimeString()}
-                              </span>
-                            </div>
-                            <ChevronRight className={`w-5 h-5 text-stone-500 transition-transform ${selectedMessageId === msg.id ? 'rotate-90 text-white' : ''}`} />
+                    messages
+                      .filter(m => m.role && m.timestamp && m.content) // Defensive filtering
+                      .map((msg) => (
+                        <motion.div
+                          layout
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          key={msg.id}
+                          onClick={() => setSelectedMessageId(msg.id)}
+                          className={`flex gap-6 p-6 rounded transition-peak cursor-pointer border ${selectedMessageId === msg.id
+                              ? 'bg-white/5 border-cyan/30 brutalist-shadow'
+                              : 'bg-transparent border-white/5 hover:border-white/20'
+                            }`}
+                        >
+                          <div className={`w-12 h-12 rounded flex items-center justify-center shrink-0 font-mono text-sm font-bold ${getRoleColor(msg.role)}`}>
+                            {msg.role[0]?.toUpperCase() || 'P'}
                           </div>
-                          <p className="text-stone-300 leading-relaxed text-base wrap-break-word">
-                            {msg.content}
-                          </p>
-                        </div>
-                      </motion.div>
-                    ))
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-4">
+                                <span className="font-bold text-white text-xs uppercase tracking-widest">{msg.role} Protocol</span>
+                                <div className="h-1 w-1 bg-muted-smoke rounded-full" />
+                                <span className="text-muted-smoke font-mono text-[10px] flex items-center gap-1.5 uppercase tracking-widest">
+                                  <Clock className="w-3 h-3" />
+                                  {new Date(msg.timestamp).toLocaleTimeString([], { hour12: false })}
+                                </span>
+                              </div>
+                              {selectedMessageId === msg.id && (
+                                <div className="w-2 h-2 bg-cyan rounded-full shadow-[0_0_8px_#00ffff]" />
+                              )}
+                            </div>
+                            <p className="font-mono text-[13px] text-white/80 leading-relaxed tracking-tight whitespace-pre-wrap break-words">
+                              {msg.content}
+                            </p>
+                          </div>
+                        </motion.div>
+                      ))
                   )}
                 </AnimatePresence>
               </div>
             </section>
           </div>
 
-          <div className="col-span-4 space-y-6">
-            <div className="glass-morphism rounded-3xl premium-shadow p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <Shield className="w-5 h-5 text-stone-300" />
-                <h3 className="font-bold text-white">Active Intelligence</h3>
+          <div className="col-span-4 space-y-8">
+            <div className="bg-pure-black border border-white/10 rounded-lg p-8 brutalist-shadow">
+              <div className="flex items-center gap-3 mb-8">
+                <Shield className="w-4 h-4 text-white/50" />
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] tight-heading">Active Protocols</h3>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {agents.map((agent) => (
-                  <div key={agent.id} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5">
-                    <div className={`w-8 h-8 rounded-lg ${getRoleColor(agent.role)} flex items-center justify-center shrink-0 text-xs font-bold`}>
+                  <div key={agent.id} className="flex items-start gap-4">
+                    <div className={`w-6 h-6 rounded flex items-center justify-center shrink-0 text-[10px] font-bold ${getRoleColor(agent.role)}`}>
                       {agent.role[0]?.toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-sm font-bold text-white capitalize block">{agent.role}</span>
-                      <p className="text-[10px] text-stone-500 truncate">{agent.persona}</p>
+                      <span className="text-xs font-bold text-white uppercase tracking-widest block mb-1">{agent.role}</span>
+                      <p className="text-[11px] text-muted-smoke line-clamp-2 leading-relaxed">{agent.persona}</p>
                     </div>
                   </div>
                 ))}
@@ -176,42 +190,45 @@ export default function SimulationDashboard() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={selectedMessageId || 'empty'}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="glass-morphism rounded-3xl premium-shadow p-8 min-h-[400px]"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="bg-pure-black border border-white/10 rounded-lg p-8 min-h-[380px] relative overflow-hidden"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2 bg-blue-500/20 rounded-lg">
-                    <Info className="w-5 h-5 text-blue-400" />
+                {/* Internal Glow for RAG box */}
+                <div className="absolute top-0 right-0 w-32 h-32 glow-cyan/10 pointer-events-none" />
+                
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="p-2 bg-signal/10 rounded border border-signal/20">
+                    <Info className="w-4 h-4 text-signal" />
                   </div>
-                  <h3 className="font-bold text-white">RAG Evidence</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-[0.2em] tight-heading">Neural Evidence</h3>
                 </div>
 
                 {selectedMessage && selectedMessage.evidence ? (
-                  <div className="space-y-6">
-                    <p className="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-2">Sources retrieved for this response:</p>
-                    <div className="space-y-4 bg-stone-900/30 p-4 rounded-2xl border border-white/5">
-                      {selectedMessage.evidence.split('\n\n').map((chunk, i) => (
-                        <div key={i} className="text-sm text-stone-400 leading-relaxed italic border-l-2 border-blue-500/30 pl-4 py-1">
+                  <div className="space-y-8">
+                    <p className="text-[10px] font-mono text-muted-smoke uppercase tracking-widest">Grounding context retrieved:</p>
+                    <div className="space-y-6 border-l border-signal/30 pl-6">
+                      {selectedMessage.evidence.split('\n\n').slice(0, 3).map((chunk, i) => (
+                        <div key={i} className="font-mono text-[11px] text-white/60 leading-relaxed italic">
                           "{chunk.replace(/^\[Context \d+\]: /, '')}"
                         </div>
                       ))}
                     </div>
-                    <div className="pt-4 border-t border-white/10">
-                      <div className="flex items-center justify-between text-[10px] text-stone-500 font-bold uppercase tracking-tighter">
-                        <span>Reliability Score</span>
-                        <span className="text-blue-400">92%</span>
+                    <div className="pt-6 border-t border-white/5">
+                      <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-widest mb-3">
+                        <span className="text-muted-smoke">Retained Confidence</span>
+                        <span className="text-cyan">94%</span>
                       </div>
-                      <div className="mt-2 w-full bg-white/5 h-1 rounded-full overflow-hidden">
-                        <div className="bg-blue-500 h-full w-[92%]" />
+                      <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden border border-white/5">
+                        <div className="bg-cyan h-full w-[94%] shadow-[0_0_5px_#00ffff]" />
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-                    <Layers className="w-10 h-10 text-stone-700" />
-                    <p className="text-stone-500 text-sm">Select an agent message to view retrieved market intelligence.</p>
+                  <div className="flex flex-col items-center justify-center py-24 text-center space-y-6 grayscale opacity-30">
+                    <Layers className="w-10 h-10 text-white" />
+                    <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white">Awaiting protocol selection</p>
                   </div>
                 )}
               </motion.div>
@@ -222,16 +239,16 @@ export default function SimulationDashboard() {
 
       {status === 'completed' && (
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="fixed bottom-8 left-1/2 -translate-x-1/2 glass-morphism px-8 py-4 rounded-2xl border border-green-500/30 flex items-center gap-4 z-50 bg-green-500/10"
+          className="fixed bottom-12 left-1/2 -translate-x-1/2 bg-green-500 text-black px-10 py-5 rounded brutalist-shadow flex items-center gap-6 z-50"
         >
-          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/20">
-            <CheckCircle className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 bg-black rounded flex items-center justify-center">
+            <CheckCircle className="w-6 h-6 text-white" />
           </div>
           <div>
-            <div className="font-bold text-white text-lg">Simulation Matrix Stabilized</div>
-            <div className="text-green-400 text-xs font-medium uppercase tracking-widest">Finalizing insights engine...</div>
+            <div className="font-bold text-sm uppercase tracking-[0.2em] tight-heading">Simulation Matrix Stabilized</div>
+            <div className="text-black/70 font-mono text-[10px] uppercase tracking-widest">Generating ultimate synthesis...</div>
           </div>
         </motion.div>
       )}

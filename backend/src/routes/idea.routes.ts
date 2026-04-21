@@ -1,17 +1,26 @@
-import { Router } from 'express'
+import { Router, Response } from 'express'
 import { createSimulation } from '../services/simulation.service'
+import { authenticateToken, AuthRequest } from '../middleware/auth.middleware'
 
 const router = Router()
 
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { description } = req.body
+    const userId = req.userId
 
     if (!description) {
       return res.status(400).json({ error: 'Description is required' })
     }
 
-    const simulationId = await createSimulation({ idea: description })
+    if (!userId) {
+      return res.status(401).json({ error: 'User ID is missing from token' })
+    }
+
+    const simulationId = await createSimulation({ 
+      idea: description,
+      userId: userId
+    })
 
     res.status(201).json({ id: simulationId })
   } catch (error) {

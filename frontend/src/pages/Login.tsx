@@ -16,14 +16,14 @@ export default function Login() {
     setValidationError(null)
 
     if (!isValidEmail(email)) {
-      setValidationError('Please enter a valid email')
+      setValidationError('INVALID_EMAIL_FORMAT')
       return
     }
 
     if (!isLogin) {
       const passwordCheck = isValidPassword(password)
       if (!passwordCheck.valid) {
-        setValidationError(`Password must have: ${passwordCheck.errors.join(', ')}`)
+        setValidationError(`INSECURE_PASSWORD: ${passwordCheck.errors.join(', ')}`)
         return
       }
     }
@@ -36,81 +36,87 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-stone-900 rounded-xl flex items-center justify-center">
-              <Layers className="w-6 h-6 text-white" />
+    <div className="min-h-screen bg-void-black text-white flex items-center justify-center p-6 selection:bg-cyan/30 relative overflow-hidden">
+      {/* Bioluminescent Glows */}
+      <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] glow-blue pointer-events-none opacity-40" />
+      <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] glow-cyan pointer-events-none opacity-20" />
+
+      <div className="max-w-md w-full relative z-10">
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-white rounded flex items-center justify-center brutalist-shadow">
+              <Layers className="w-7 h-7 text-black" />
             </div>
           </div>
-          <h1 className="text-2xl font-semibold text-stone-900 mb-2">
-            {isLogin ? 'Welcome back' : 'Create account'}
+          <h1 className="text-4xl font-bold uppercase tracking-[0.2em] tight-heading mb-3">
+            {isLogin ? 'Access System' : 'Initialize Node'}
           </h1>
-          <p className="text-stone-500">
-            {isLogin ? 'Sign in to run simulations' : 'Get started with hidev'}
+          <p className="text-muted-smoke font-mono text-[10px] uppercase tracking-[0.2em] font-medium">
+            {isLogin ? 'Authenticate to realityforge link' : 'Register new neural operator'}
           </p>
         </div>
 
-        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="bg-pure-black border border-white/10 rounded p-10 brutalist-shadow">
+          <form onSubmit={handleSubmit} className="space-y-8">
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
+              <label className="block text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-muted-smoke mb-3">Identity Vector (Email)</label>
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-cyan transition-colors" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full border border-stone-300 rounded-lg py-3 pl-10 pr-4 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 transition-colors"
+                  placeholder="operator@realityforge.ai"
+                  className="w-full bg-void-black/50 border border-white/5 rounded py-4 pl-12 pr-4 text-white font-mono text-xs placeholder-white/10 focus:outline-none focus:border-cyan/30 focus:ring-1 focus:ring-cyan/30 transition-peak"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
+              <label className="block text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-muted-smoke mb-3">Access Cipher (Password)</label>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-cyan transition-colors" />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full border border-stone-300 rounded-lg py-3 pl-10 pr-4 text-stone-900 placeholder-stone-400 focus:outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 transition-colors"
+                  className="w-full bg-void-black/50 border border-white/5 rounded py-4 pl-12 pr-4 text-white font-mono text-xs placeholder-white/10 focus:outline-none focus:border-cyan/30 focus:ring-1 focus:ring-cyan/30 transition-peak"
                   required
                 />
               </div>
             </div>
 
             {(error || validationError) && (
-              <p className="text-sm text-red-600">{error || validationError}</p>
+              <div className="p-4 bg-red-500/10 border border-red-500/20 rounded">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-red-500">{error || validationError}</p>
+              </div>
             )}
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-stone-900 hover:bg-stone-800 disabled:bg-stone-300 disabled:cursor-not-allowed text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-white hover:bg-cyan text-black py-4 rounded-sm font-bold uppercase tracking-[0.2em] text-xs transition-peak flex items-center justify-center gap-3 disabled:bg-white/10 disabled:text-white/20 disabled:cursor-not-allowed brutalist-shadow"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  {isLogin ? 'Signing in...' : 'Creating account...'}
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  {isLogin ? 'TRANSMITTING...' : 'INITIALIZING...'}
                 </>
               ) : (
-                <>{isLogin ? 'Sign In' : 'Create Account'}</>
+                <>{isLogin ? 'AUTHENTICATE' : 'INITIALIZE'}</>
               )}
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-stone-100 text-center">
+          <div className="mt-10 pt-8 border-t border-white/5 text-center">
             <button
               type="button"
               onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-stone-600 hover:text-stone-900 transition-colors"
+              className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-smoke hover:text-white transition-peak underline underline-offset-4"
             >
-              {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+              {isLogin ? "Request New Neural ID" : 'Return to AUTH_NODE'}
             </button>
           </div>
         </div>
