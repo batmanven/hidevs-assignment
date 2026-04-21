@@ -1,13 +1,22 @@
 import { PrismaClient } from '@prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { Pool } from 'pg'
 import { config } from '../config'
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient }
 
-const pool = new Pool({ connectionString: config.databaseUrl })
-const adapter = new PrismaPg(pool)
+// Diagnostic log for production connectivity (without leaking credentials)
+if (config.databaseUrl) {
+  const maskedUrL = config.databaseUrl.replace(/:[^:@]+@/, ':***@')
+  console.log(`[PRISMA] Initializing with datasource: ${maskedUrL.split('@')[1] || 'internal'}`)
+} else {
+  console.error('[PRISMA] CRITICAL ERROR: DATABASE_URL is missing from environment.')
+}
 
-export const prisma = globalForPrisma.prisma || new PrismaClient({ adapter })
+export const prisma = globalForPrisma.prisma || new PrismaClient({
+  datasources: {
+    db: {
+      url: config.databaseUrl
+    }
+  }
+})
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
