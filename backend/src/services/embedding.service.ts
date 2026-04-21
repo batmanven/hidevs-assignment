@@ -14,14 +14,12 @@ export interface EmbeddingResult {
   metadata?: Record<string, any>
 }
 
-/**
- * Generates a vector representation using Gemini text-embedding-004.
- */
+
 export async function generateEmbedding(text: string): Promise<number[]> {
   try {
     // text-embedding-004 is the latest robust embedding model from Google
     const result = await ai.models.embedContent({
-      model: 'text-embedding-004',
+      model: 'models/text-embedding-004',
       contents: [text]
     })
     
@@ -35,7 +33,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
     console.warn('Gemini embedding failed, trying fallback model (embedding-001):', error.message)
     try {
       const fallbackResult = await ai.models.embedContent({
-        model: 'embedding-001',
+        model: 'models/embedding-001',
         contents: [text]
       })
       return fallbackResult.embeddings?.[0]?.values || new Array(768).fill(0).map(() => Math.random() * 2 - 1)
@@ -174,7 +172,6 @@ export async function initializeKnowledgeBase(): Promise<void> {
       content: "Technology stack for food delivery: mobile apps (iOS/Android), web dashboard, driver app, restaurant portal, real-time tracking, payment processing. Development cost $100-300K.",
       metadata: { category: "technology", source: "development" }
     },
-    // PEAK DEMO GROUNDING DATA
     {
       content: "Hyperlocal grocery demand in Tier 2 cities is driven by 'Zero-Waste' consciousness and 'Just-in-Time' cooking habits. CAC in these regions is 40% lower than Tier 1 but logistics complexity increases by 60% due to unmapped terrain.",
       metadata: { category: "market_expansion", source: "tier2_report" }
