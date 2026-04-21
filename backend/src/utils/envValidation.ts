@@ -2,7 +2,7 @@ import { config } from '../config'
 
 const requiredEnvVars: string[] = [
   'DATABASE_URL',
-  'ANTHROPIC_API_KEY',
+  'GEMINI_API_KEY',
   'JWT_SECRET'
 ]
 
