@@ -46,7 +46,7 @@ export async function storeEmbedding(
   const vectorStr = `[${embedding.join(',')}]`
 
   await prisma.$executeRaw`
-    INSERT INTO "Embedding" (id, content, vector, metadata, createdAt)
+    INSERT INTO Embedding (id, content, vector, metadata, createdAt)
     VALUES (${id}, ${content}, ${vectorStr}::vector, ${metadata || {}}::jsonb, NOW())
   `
 
@@ -68,7 +68,7 @@ export async function searchSimilarEmbeddings(
         content, 
         metadata,
         1 - (vector <=> ${vectorStr}::vector) as similarity
-      FROM "Embedding"
+      FROM Embedding
       WHERE vector IS NOT NULL
       ORDER BY vector <=> ${vectorStr}::vector ASC
       LIMIT ${limit}
