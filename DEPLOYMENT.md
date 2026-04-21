@@ -1,104 +1,78 @@
-# Deployment Guide
+# RealityForge Deployment Guide
 
-## Production Deployment
+RealityForge is engineered for high-fidelity simulation and rapid deployment. This guide covers the modernized architecture utilizing Google Gemini, Portable Vector Search, and the automated Render.com Blueprint.
+
+---
+
+## 🚀 1-Click Deployment (Render.com)
+
+The easiest way to deploy the entire RealityForge stack (Database, Backend, and Frontend) is using the included **Render Blueprint**.
 
 ### Prerequisites
-- Docker and Docker Compose
-- PostgreSQL 16 with pgvector extension
-- Anthropic API Key
-- Domain name (optional)
+1. A [Render.com](https://render.com) account.
+2. A **Google Gemini API Key** (from [Google AI Studio](https://aistudio.google.com/)).
 
-### Environment Variables
+### Steps
+1. Connect your GitHub repository to Render.
+2. Render will automatically detect the `render.yaml` file and prompt you to create a **Blueprint Group**.
+3. **Configure Environment Variables**:
+   - `GEMINI_API_KEY`: Paste your Gemini API key.
+   - `JWT_SECRET`: Render will generate a secure one for you automatically.
+4. Click **Apply**.
+5. Once the database is ready, Render will build and deploy the services.
 
-Create a production `.env` file:
+---
 
-```env
-DATABASE_URL=postgresql://user:password@postgres:5432/realityforge
-ANTHROPIC_API_KEY=your_api_key_here
-PORT=3001
-NODE_ENV=production
-CORS_ORIGIN=https://yourdomain.com
-JWT_SECRET=your_secure_jwt_secret_here
-JWT_EXPIRES_IN=7d
-LOG_LEVEL=info
-```
+## 🏗️ Technical Architecture
 
-### Docker Deployment
+### 1. Portable Vector Search (RAG)
+Unlike legacy AI pipelines, RealityForge **does not require the `pgvector` extension**. 
+- We utilize an **In-Memory Cosine Similarity** engine.
+- This ensures compatibility with any standard PostgreSQL instance (AWS RDS, Managed Render DB, etc.).
 
-1. Build the images:
+### 2. Multi-Agent Intelligence
+The system is powered by **Gemini 2.0 Flash**. 
+- Self-healing authentication restores ghost sessions after DB resets.
+- Intelligent fallbacks provide high-fidelity mock data during API downtime.
+
+---
+
+## 🛠️ Manual Deployment Configuration (Non-Blueprint)
+
+If you are deploying to a different provider (AWS, Railway, etc.), ensure the following variables are set:
+
+### Backend Service
+| Variable | Description |
+| :--- | :--- |
+| `DATABASE_URL` | PostgreSQL connection string (Major v16 recommended) |
+| `GEMINI_API_KEY` | Google AI Studio Key |
+| `JWT_SECRET` | Secure string for token signing |
+| `NODE_ENV` | Set to `production` |
+| `PORT` | Set to `3001` (or your preferred port) |
+
+**Build Command**:
 ```bash
-docker-compose build
+cd backend && npm install && npx prisma generate && npm run build
 ```
 
-2. Start the services:
+### Frontend (Static Site)
+| Variable | Description |
+| :--- | :--- |
+| `VITE_API_URL` | Your backend URL (e.g., `https://backend-api.com/api`) |
+
+**Build Command**:
 ```bash
-docker-compose up -d
+cd frontend && npm install && npm run build
 ```
 
-3. Run database migrations:
-```bash
-docker-compose exec backend npx prisma migrate deploy
-```
+---
 
-4. Initialize the knowledge base:
-```bash
-docker-compose exec backend npm run seed:kb
-```
+## 🛡️ Health & Monitoring
+- **Health Check**: `GET /health` (Returns `{"status":"ok"}`)
+- **Simulation Stream**: Uses `Socket.io` (Ensure your provider supports WebSockets).
+- **Prisma Studio**: `cd backend && npx prisma studio` (Local debugging only).
 
-### Railway Deployment
+---
 
-1. Create a Railway account
-2. Connect your GitHub repository
-3. Add the following services:
-   - PostgreSQL (with pgvector)
-   - Backend (Node.js)
-   - Frontend (Static)
-
-4. Configure environment variables in Railway dashboard
-
-5. Deploy
-
-### AWS Deployment
-
-#### Using ECS
-
-1. Create an ECR repository
-2. Push Docker images
-3. Create ECS task definitions
-4. Set up load balancer
-5. Configure RDS PostgreSQL with pgvector
-
-#### Using Elastic Beanstalk
-
-1. Create Elastic Beanstalk application
-2. Configure environment variables
-3. Deploy Docker containers
-
-### Monitoring
-
-- Health check: `GET /health`
-- Metrics: `GET /metrics`
-- Logs: Check `/logs` directory
-- API Docs: `GET /api-docs`
-
-### Scaling
-
-- Use horizontal pod autoscaling (Kubernetes)
-- Configure database connection pooling
-- Implement Redis for distributed caching
-- Use CDN for static assets
-
-### Security
-
-- Use HTTPS in production
-- Configure firewall rules
-- Enable database SSL
-- Rotate secrets regularly
-- Use environment-specific API keys
-
-### Backup
-
-- Database backups: Daily automated backups
-- Enable point-in-time recovery
-- Backup configuration files
-- Document deployment state
+> [!IMPORTANT]
+> **Production Reset**: If you reset your production database, the **Self-Healing Auth** will automatically restore active user sessions upon their next simulation attempt. No manual user migration is required.
