@@ -1,6 +1,9 @@
 import dotenv from 'dotenv'
 
-dotenv.config()
+// Only load .env in development to prevent overriding system environment variables in production (like Render/Vercel)
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config()
+}
 
 export const config = {
   port: process.env.PORT || 3001,
