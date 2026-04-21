@@ -21,11 +21,7 @@ export default function NeuralLoadingModal({ isOpen, onComplete }: NeuralLoading
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    if (!isOpen) {
-      setCurrentStep(0)
-      setProgress(0)
-      return
-    }
+    if (!isOpen) return
 
     const totalDuration = steps.reduce((acc, step) => acc + step.duration, 0)
     const startTime = Date.now()
@@ -33,6 +29,7 @@ export default function NeuralLoadingModal({ isOpen, onComplete }: NeuralLoading
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime
       const newProgress = Math.min((elapsed / totalDuration) * 100, 100)
+      
       setProgress(newProgress)
 
       // Update current step based on elapsed time
@@ -51,7 +48,12 @@ export default function NeuralLoadingModal({ isOpen, onComplete }: NeuralLoading
       }
     }, 50)
 
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+      // Reset state when the modal closes or before the next run
+      setCurrentStep(0)
+      setProgress(0)
+    }
   }, [isOpen, onComplete])
 
   if (!isOpen) return null
