@@ -46,7 +46,7 @@ export async function storeEmbedding(
   const vectorStr = `[${embedding.join(',')}]`
 
   await prisma.$executeRaw`
-    INSERT INTO "Embedding" (id, content, vector, metadata, "createdAt")
+    INSERT INTO "Embedding" (id, content, vector, metadata, createdAt)
     VALUES (${id}, ${content}, ${vectorStr}::vector, ${metadata || {}}::jsonb, NOW())
   `
 

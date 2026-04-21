@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '../lib/prisma'
 import { ClaudeMessage, generateResponse } from './claude.service'
-
-const prisma = new PrismaClient()
 
 export interface ConversationTurn {
   id: string

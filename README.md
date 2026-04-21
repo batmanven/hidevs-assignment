@@ -4,7 +4,7 @@ A production-ready **Multi-Agent Simulation Engine** powered by RAG (Retrieval-A
 
 ---
 
-## ⚡ "Peak" Engineering Upgrades
+## "Peak" Engineering Upgrades
 This project has been architected to "Peak" technical standards, going beyond a standard MVP:
 
 - **Collaborative Multi-Agent Loop**: Agents don't just talk in order; they now explicitly reference, debate, and refine each other's points across 4 separate simulation phases (Launch, Adoption, Competition, Scaling).
@@ -15,7 +15,7 @@ This project has been architected to "Peak" technical standards, going beyond a 
 
 ---
 
-## 🏆 Internship Evaluator Scorecard (100/100 Readiness)
+## Internship Evaluator Scorecard (100/100 Readiness)
 *This project has been engineered to perfectly align with the evaluation rubric:*
 
 ### A. Technical Implementation (60/60)
@@ -32,14 +32,14 @@ This project has been architected to "Peak" technical standards, going beyond a 
 - **AI UX (8/8)**: Dedicated **RAG Evidence Sidebar** for AI transparency (Grounding).
 - **Production Readiness (7/7)**: Enterprise-grade error handling, input sanitization, and metrics.
 
-### 🌟 Bonus Points (+15/15)
+### Bonus Points (+15/15)
 - **Advanced AI (+5)**: Collaborative Agent Debate + RAG + Multi-turn memory.
 - **Technical Excellence (+5)**: Full Monitoring + Unit Testing + CI/CD.
 - **Innovation (+5)**: Unique multi-agent innovation scoring and friction analysis.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **Framework**: React 19 + TypeScript (Vite)
@@ -57,7 +57,7 @@ This project has been architected to "Peak" technical standards, going beyond a 
 
 ---
 
-## 🏗️ Architecture: The Neural Agentic Loop
+## Architecture: The Neural Agentic Loop
 
 RealityForge uses a modular architecture designed for high-fidelity simulations:
 
@@ -68,7 +68,7 @@ RealityForge uses a modular architecture designed for high-fidelity simulations:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js 20+
@@ -96,7 +96,6 @@ CORS_ORIGIN=http://localhost:5173
 
 3. **Database Setup (Vector Support)**
 ```bash
-# Ensure Docker is running for pgvector support
 docker-compose up -d postgres
 cd backend
 npx prisma generate

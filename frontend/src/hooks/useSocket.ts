@@ -40,6 +40,7 @@ export function useSocket(simulationId: string | undefined) {
     if (!simulationId) return
 
     const socket = io(SOCKET_URL)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSocket(socket)
 
     socket.emit('join_simulation', simulationId)

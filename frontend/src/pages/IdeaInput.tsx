@@ -16,7 +16,7 @@ export default function IdeaInput() {
       const id = await createSimulation(idea)
       navigate(`/simulation/${id}`)
     } catch {
-      
+      // Error handled in store
     }
   }
 
